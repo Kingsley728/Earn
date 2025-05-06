@@ -1,32 +1,26 @@
-// Strict mode
-'use strict';
-
 (() => {
-  // Facebook SDK initialization
-  window.fbAsyncInit = function() {
+  // Facebook SDK init
+  window.fbAsyncInit = () => {
     FB.init({
-      appId      : 'YOUR_FACEBOOK_APP_ID', // REPLACE with your Facebook APP ID
-      cookie     : true,
-      xfbml      : false,
-      version    : 'v17.0'
+      appId: 'YOUR_FACEBOOK_APP_ID',
+      cookie: true,
+      xfbml: false,
+      version: 'v17.0',
     });
   };
 
-  // DOM references
   const loginContainer = document.getElementById('login-container');
   const pages = {
     balance: document.getElementById('page-balance'),
     earn: document.getElementById('page-earn'),
-    withdraw: document.getElementById('page-withdraw')
+    withdraw: document.getElementById('page-withdraw'),
   };
-
   const navButtons = {
     balance: document.querySelector('nav#burger-menu button[data-page="balance"]'),
     earn: document.querySelector('nav#burger-menu button[data-page="earn"]'),
     withdraw: document.querySelector('nav#burger-menu button[data-page="withdraw"]'),
-    logout: document.getElementById('nav-logout')
+    logout: document.getElementById('nav-logout'),
   };
-
   const burgerBtn = document.getElementById('burger-menu-btn');
   const burgerMenu = document.getElementById('burger-menu');
 
@@ -59,88 +53,84 @@
   const loginStorageKey = 'earnify_logged_in';
   let currentUser = null;
 
+  // Storage helpers
   function getUsers() {
-    const str = localStorage.getItem(storageKey);
-    return str ? JSON.parse(str) : {};
+    return JSON.parse(localStorage.getItem(storageKey) || "{}");
   }
-
   function saveUsers(users) {
     localStorage.setItem(storageKey, JSON.stringify(users));
   }
-
   function saveCurrentUser(user) {
     localStorage.setItem(loginStorageKey, user.email);
   }
-
   function getCurrentUser() {
     const email = localStorage.getItem(loginStorageKey);
     if (!email) return null;
     const users = getUsers();
     return users[email] || null;
   }
-
   function updateUser(user) {
-    let users = getUsers();
+    const users = getUsers();
     users[user.email] = user;
     saveUsers(users);
   }
-
-  function logout() {
+  function logoutUser() {
     localStorage.removeItem(loginStorageKey);
     currentUser = null;
   }
 
   function clearInputs() {
-    emailInput.value = '';
-    passwordInput.value = '';
-    regEmailInput.value = '';
-    regPasswordInput.value = '';
+    emailInput.value = "";
+    passwordInput.value = "";
+    regEmailInput.value = "";
+    regPasswordInput.value = "";
   }
 
+  // Show functions
   function showLogin() {
-    loginContainer.style.display = 'block';
-    Object.values(pages).forEach(p => (p.hidden = true));
-    burgerMenu.style.display = 'none';
-    logoutBtn.style.display = 'none';
-    burgerBtn.style.display = 'none';
+    loginContainer.style.display = "block";
+    Object.values(pages).forEach((p) => (p.hidden = true));
+    burgerMenu.style.display = "none";
+    logoutBtn.style.display = "none";
+    burgerBtn.style.display = "none";
     clearInputs();
     loginPage.hidden = false;
     registerPage.hidden = true;
   }
 
   function showRegister() {
-    loginContainer.style.display = 'block';
-    Object.values(pages).forEach(p => (p.hidden = true));
-    burgerMenu.style.display = 'none';
-    logoutBtn.style.display = 'none';
-    burgerBtn.style.display = 'none';
+    loginContainer.style.display = "block";
+    Object.values(pages).forEach((p) => (p.hidden = true));
+    burgerMenu.style.display = "none";
+    logoutBtn.style.display = "none";
+    burgerBtn.style.display = "none";
     clearInputs();
     loginPage.hidden = true;
     registerPage.hidden = false;
   }
 
   function showPage(name) {
-    loginContainer.style.display = 'none';
-    Object.keys(pages).forEach(key => {
+    loginContainer.style.display = "none";
+    Object.keys(pages).forEach((key) => {
       pages[key].hidden = key !== name;
     });
-    burgerMenu.style.display = 'none';
-    logoutBtn.style.display = 'inline-block';
-    burgerBtn.style.display = 'inline-flex';
+    burgerMenu.style.display = "none";
+    logoutBtn.style.display = "inline-block";
+    burgerBtn.style.display = "inline-flex";
     setActiveNav(name);
   }
 
   function setActiveNav(name) {
-    Object.keys(navButtons).forEach(key => {
+    Object.keys(navButtons).forEach((key) => {
       const active = key === name;
-      navButtons[key].classList.toggle('active', active);
-      navButtons[key].setAttribute('aria-current', active ? 'page' : 'false');
+      navButtons[key].classList.toggle("active", active);
+      navButtons[key].setAttribute("aria-current", active ? "page" : "false");
     });
   }
 
   function generateReferralLink(email) {
     const url = new URL(window.location.origin);
-    url.searchParams.set('ref', email);
+    url.searchParams.set("ref", email);
     return url.toString();
   }
 
@@ -170,53 +160,56 @@
     }
   }
 
-  // Authentication and button event handlers:
+  // Event handlers
   fbLoginBtn.addEventListener("click", () => {
-    FB.login((response) => {
-      if (response.authResponse) {
-        FB.api("/me", { fields: "email" }, (user) => {
-          let email = user.email || `${user.id}@fb.fake`;
-          const users = getUsers();
-          if (!users[email]) {
-            users[email] = {
-              email,
-              password: "",
-              balance: 1000,
-              invites: 0,
-              level: 1,
-              lastLoginBonus: 0,
-              followedFacebook: false,
-              followedTwitter: false,
-              followedYoutube: false,
-              likedRetweetedTwitter: false,
-              videoWatched: {},
-            };
-            saveUsers(users);
-          }
-          currentUser = users[email];
-          saveCurrentUser(currentUser);
-          showPage("balance");
-          refreshUserUI();
-          tryClaimDailyBonus();
-        });
-      } else {
-        alert("Facebook login cancelled or failed.");
-      }
-    }, { scope: "email,public_profile" });
+    FB.login(
+      (response) => {
+        if (response.authResponse) {
+          FB.api(
+            "/me",
+            { fields: "email" },
+            (user) => {
+              let email = user.email || `${user.id}@fb.fake`;
+              let users = getUsers();
+              if (!users[email]) {
+                users[email] = {
+                  email,
+                  password: "",
+                  balance: 1000,
+                  invites: 0,
+                  level: 1,
+                  lastLoginBonus: 0,
+                  followedFacebook: false,
+                  followedTwitter: false,
+                  followedYoutube: false,
+                  likedRetweetedTwitter: false,
+                  videoWatched: {},
+                };
+                saveUsers(users);
+              }
+              currentUser = users[email];
+              saveCurrentUser(currentUser);
+              showPage("balance");
+              refreshUserUI();
+              tryClaimDailyBonus();
+            }
+          );
+        } else {
+          alert("Facebook login was cancelled or failed.");
+        }
+      },
+      { scope: "email,public_profile" }
+    );
   });
 
   emailLoginBtn.addEventListener("click", () => {
     const email = emailInput.value.trim().toLowerCase();
     const pwd = passwordInput.value;
     const users = getUsers();
-    if (!users[email]) {
-      alert("User not found, please register.");
-      return;
-    }
-    if (users[email].password !== pwd) {
-      alert("Incorrect password.");
-      return;
-    }
+
+    if (!users[email]) return alert("User not found. Please Register.");
+    if (users[email].password !== pwd) return alert("Incorrect Password.");
+
     currentUser = users[email];
     saveCurrentUser(currentUser);
     showPage("balance");
@@ -227,15 +220,9 @@
   registerBtn.addEventListener("click", () => {
     const email = regEmailInput.value.trim().toLowerCase();
     const pwd = regPasswordInput.value;
-    if (!email || !pwd) {
-      alert("Please enter email and password.");
-      return;
-    }
     const users = getUsers();
-    if (users[email]) {
-      alert("User already exists, please login.");
-      return;
-    }
+    if (!email || !pwd) return alert("Please enter both email and password.");
+    if (users[email]) return alert("User exists. Please login.");
     users[email] = {
       email,
       password: pwd,
@@ -258,7 +245,7 @@
   showLoginLink.addEventListener("click", showLogin);
 
   logoutBtn.addEventListener("click", () => {
-    logout();
+    logoutUser();
     showLogin();
   });
 
@@ -284,7 +271,7 @@
     burgerBtn.setAttribute("aria-expanded", "false");
   });
   navButtons.logout.addEventListener("click", () => {
-    logout();
+    logoutUser();
     showLogin();
     burgerMenu.hidden = true;
     burgerBtn.setAttribute("aria-expanded", "false");
@@ -294,23 +281,26 @@
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(referralLinkInput.value).then(
         () => alert("Referral link copied!"),
-        () => fallbackCopyText()
+        () => fallbackCopy()
       );
     } else {
-      fallbackCopyText();
+      fallbackCopy();
     }
   });
 
-  function fallbackCopyText() {
+  function fallbackCopy() {
     referralLinkInput.select();
     referralLinkInput.setSelectionRange(0, 99999);
-    if (document.execCommand("copy")) alert("Referral link copied!");
-    else alert("Failed to copy referral link.");
+    if (document.execCommand("copy")) {
+      alert("Referral link copied!");
+    } else {
+      alert("Failed to copy referral link.");
+    }
   }
 
   function followEarn(platform, url, key, amount, btn) {
     if (currentUser[key]) {
-      alert(`Already earned ₦${amount.toLocaleString()} for following ${platform}.`);
+      alert(`You have already earned ₦${amount.toLocaleString()} for following ${platform}.`);
       return;
     }
     window.open(url, "_blank", "noopener");
@@ -319,7 +309,7 @@
       currentUser[key] = true;
       updateUser(currentUser);
       refreshUserUI();
-      alert("🎉 Earned ₦" + amount.toLocaleString());
+      alert("🎉 You earned ₦" + amount.toLocaleString());
       btn.disabled = true;
     }
   }
@@ -334,27 +324,15 @@
     )
   );
   followTwitterBtn.addEventListener("click", () =>
-    followEarn(
-      "Twitter",
-      "https://twitter.com/youraccount",
-      "followedTwitter",
-      5000,
-      followTwitterBtn
-    )
+    followEarn("Twitter", "https://twitter.com/youraccount", "followedTwitter", 5000, followTwitterBtn)
   );
   followYoutubeBtn.addEventListener("click", () =>
-    followEarn(
-      "YouTube",
-      "https://youtube.com/@learnwithugo",
-      "followedYoutube",
-      5000,
-      followYoutubeBtn
-    )
+    followEarn("YouTube", "https://youtube.com/@learnwithugo", "followedYoutube", 5000, followYoutubeBtn)
   );
 
   twitterLikeBtn.addEventListener("click", () => {
     if (currentUser.likedRetweetedTwitter) {
-      alert("Already earned for liking & retweeting.");
+      alert("You have already earned for liking & retweeting.");
       return;
     }
     window.open("https://twitter.com/youraccount/status/1234567890", "_blank", "noopener");
@@ -363,7 +341,7 @@
       currentUser.likedRetweetedTwitter = true;
       updateUser(currentUser);
       refreshUserUI();
-      alert("🎉 Earned ₦500");
+      alert("🎉 You earned ₦500");
       twitterLikeBtn.disabled = true;
     }
   });
@@ -389,26 +367,24 @@
       videoStatus[videoId] = true;
       updateUser(currentUser);
       refreshUserUI();
-      alert("🎉 Earned ₦500 for watching the video!");
+      alert("🎉 You earned ₦500 for watching the video!");
       btn.disabled = true;
       delete videoTimers[videoId];
     }, FIVE_MINUTES);
   }
 
   document.querySelectorAll(".watch-video-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      startWatchTimer(btn.getAttribute("data-video-id"), btn);
-    });
+    btn.addEventListener("click", () => startWatchTimer(btn.getAttribute("data-video-id"), btn));
   });
 
   inviteBtn.addEventListener("click", () => {
     if (currentUser.level >= 10) {
-      alert("You have reached max level 10.");
+      alert("Max level 10 reached.");
       return;
     }
     const friendEmail = prompt("Enter friend's email to invite:");
     if (!friendEmail || !friendEmail.includes("@")) {
-      alert("Please enter a valid email.");
+      alert("Enter a valid email.");
       return;
     }
     currentUser.invites = (currentUser.invites || 0) + 1;
@@ -416,9 +392,9 @@
     const newLevel = Math.min(10, Math.floor(currentUser.invites / 5) + 1);
     if (newLevel !== currentUser.level) {
       currentUser.level = newLevel;
-      alert(`🎉 Congratulations! You leveled up to level ${newLevel}!`);
+      alert(`🎉 Congrats! You leveled up to level ${newLevel}!`);
     } else {
-      alert("🎉 Invite recorded! ₦800 credited!");
+      alert("🎉 Invite successful! ₦800 credited!");
     }
     updateUser(currentUser);
     refreshUserUI();
@@ -427,7 +403,7 @@
   withdrawForm.addEventListener("submit", (e) => {
     e.preventDefault();
     if (!currentUser) {
-      alert("Please log in first.");
+      alert("Please login first.");
       return;
     }
     const amount = Number(withdrawAmountInput.value);
@@ -476,6 +452,8 @@
     }
   }
 
+  init();
+
   burgerBtn.addEventListener("click", () => {
     const expanded = burgerBtn.getAttribute("aria-expanded") === "true";
     burgerBtn.setAttribute("aria-expanded", !expanded);
@@ -484,20 +462,16 @@
 
   burgerMenu.querySelectorAll("button[data-page]").forEach((button) => {
     button.addEventListener("click", () => {
-      const page = button.getAttribute("data-page");
-      showPage(page);
+      showPage(button.getAttribute("data-page"));
       burgerMenu.hidden = true;
       burgerBtn.setAttribute("aria-expanded", "false");
     });
   });
 
   navButtons.logout.addEventListener("click", () => {
-    logout();
+    logoutUser();
     currentUser = null;
     showLogin();
     burgerMenu.hidden = true;
     burgerBtn.setAttribute("aria-expanded", "false");
   });
-
-  document.addEventListener("DOMContentLoaded", init);
-})();
