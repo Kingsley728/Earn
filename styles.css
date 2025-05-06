@@ -1,4 +1,4 @@
-/* Reset */
+/* Reset and base */
 * {
   box-sizing: border-box;
 }
@@ -6,78 +6,70 @@ html, body {
   margin: 0; padding: 0;
   font-family: 'Poppins', Arial, sans-serif;
   font-size: 16px;
-  background-color: #ffffff;
-  min-height: 100vh;
+  background: #fff;
   color: #003366;
   height: 100%;
+  min-height: 100vh;
 }
 #app {
-  width: 100%;
   max-width: 460px;
-  background-color: #ffffff;
-  border: 1px solid #0a3a66;
+  margin: 0 auto;
+  box-shadow: 0 8px 20px rgba(0, 58, 115, 0.2);
   border-radius: 16px;
-  overflow: hidden;
+  border: 1px solid #0a3a66;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 8px 20px rgb(0 58 115 / 0.2);
   height: 100vh;
   position: relative;
 }
 header {
-  background-color: #004080;
+  background: #004080;
   color: #fff;
   font-weight: 700;
   font-size: 2rem;
   padding: 20px;
-  user-select: none;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  user-select: none;
 }
 #burger-menu-btn {
   background: none;
   border: none;
   cursor: pointer;
-  flex-shrink: 0;
   width: 32px;
   height: 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  padding: 0;
 }
 #burger-menu-btn span {
-  display: block;
   height: 4px;
-  background-color: #fff;
+  background: #fff;
   border-radius: 3px;
 }
 #logout-btn {
-  background-color: #ff6f00;
+  background: #ff6f00;
   border: none;
-  color: white;
+  color: #fff;
   padding: 8px 20px;
   border-radius: 28px;
-  cursor: pointer;
   font-weight: 700;
   font-size: 0.95rem;
-  box-shadow: 0 4px 12px rgb(255 111 0 / 0.6);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 111, 0, 0.6);
   transition: background-color 0.3s ease;
   display: none;
   white-space: nowrap;
 }
 #logout-btn:hover {
-  background-color: #ff8f22;
+  background: #ff8f22;
 }
-
-main {
-  flex-grow: 1;
-  overflow-y: auto;
-  padding: 24px 28px 80px 28px;
-}
+/* Burger Menu */
 nav#burger-menu {
   position: absolute;
-  top: 68px;
+  top: 64px;
   right: 20px;
   background: #004080;
   border-radius: 12px;
@@ -87,75 +79,80 @@ nav#burger-menu {
   z-index: 100;
 }
 nav#burger-menu button {
-  border: none;
   background: transparent;
+  border: none;
   color: #c3d8ff;
+  padding: 12px 18px;
   font-weight: 700;
   font-size: 1rem;
-  padding: 12px 18px;
   text-align: left;
   cursor: pointer;
   transition: background-color 0.2s;
 }
 nav#burger-menu button:hover,
 nav#burger-menu button.active {
-  background-color: #113366;
+  background: #113366;
   color: #ffd080;
 }
-/* Login/Register Container */
+main {
+  padding: 24px 28px 36px 28px;
+  flex-grow: 1;
+  overflow-y: auto;
+}
 #login-container {
   max-width: 400px;
   margin: 0 auto;
-  padding: 32px 36px 36px 36px;
+  padding: 32px 36px;
   border-radius: 16px;
   background: linear-gradient(135deg, #e6f1ff 0%, #f0f8ff 100%);
-  box-shadow: 0 12px 30px rgb(0 80 158 / 0.35);
+  box-shadow: 0 12px 30px rgba(0, 80, 158, 0.35);
 }
 h2 {
-  margin-top: 0;
+  margin: 0 0 28px 0;
   font-weight: 700;
   color: #003366;
   text-align: center;
-  margin-bottom: 28px;
   letter-spacing: 0.15em;
 }
 label {
+  display: block;
+  margin-bottom: 8px;
   font-weight: 600;
   color: #004080;
-  margin-bottom: 8px;
-  display: block;
+}
+input, select, button {
+  font-family: 'Poppins', sans-serif;
 }
 input[type="email"], input[type="password"], input[type="text"], input[type="number"], select {
   width: 100%;
-  border: 2px solid #004080;
-  border-radius: 14px;
   padding: 14px 16px;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #003366;
+  border-radius: 14px;
+  border: 2px solid #004080;
   margin-bottom: 24px;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #003366;
   outline-offset: 2px;
   transition: border-color 0.3s ease;
-  font-family: 'Poppins', sans-serif;
 }
-input[type="email"]:focus, input[type="password"]:focus,
-input[type="text"]:focus, input[type="number"]:focus, select:focus {
+input[type="email"]:focus, input[type="password"]:focus, input[type="text"]:focus, input[type="number"]:focus, select:focus {
   border-color: #ff6f00;
+  outline: none;
 }
 button {
-  background-color: #004080;
+  background: #004080;
+  border: none;
+  border-radius: 28px;
   color: white;
   font-weight: 700;
   padding: 14px 0;
-  border-radius: 28px;
-  border: none;
   font-size: 1.05rem;
   cursor: pointer;
-  box-shadow: 0 8px 22px rgb(0 64 128 / 0.45);
+  box-shadow: 0 8px 22px rgba(0, 64, 128, 0.45);
   transition: background-color 0.3s ease;
   width: 100%;
 }
-button:hover:not(:disabled) {
+button:hover:enabled {
   background-color: #002b5c;
 }
 button:disabled {
@@ -163,7 +160,6 @@ button:disabled {
   cursor: not-allowed;
 }
 .link-toggle {
-  font-size: 0.9rem;
   color: #ff6f00;
   cursor: pointer;
   text-align: center;
@@ -174,11 +170,104 @@ button:disabled {
 .link-toggle:hover {
   text-decoration: underline;
 }
-/* Pages visibility */
-section.page {
+/* Pages */
+.page {
   display: none;
 }
-section.page.active {
+.page.active {
   display: block;
 }
-/* Additional styling for pages as before (omitted for brevity) */
+/* Balance page */
+.balance-box {
+  background: #eaf3ff;
+  border: 2px solid #004080;
+  border-radius: 24px;
+  padding: 40px 0;
+  margin-bottom: 40px;
+  box-shadow: inset 0 0 30px #bccfed;
+  text-align: center;
+}
+.balance-box h3 {
+  font-size: 4rem;
+  font-weight: 900;
+  color: #00274d;
+  letter-spacing: 0.15em;
+  margin-bottom: 14px;
+}
+.balance-box p {
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: #004080;
+}
+.referral {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff6df;
+  border: 2px solid #ffb300;
+  border-radius: 24px;
+  padding: 14px 20px;
+  margin-bottom: 36px;
+  max-width: 380px;
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #a66300;
+  box-shadow: 0 0 18px #ffdd8fad;
+}
+.referral input {
+  border: none;
+  background: transparent;
+  color: #996c00;
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-grow: 1;
+  user-select: text;
+}
+
+.referral button {
+  background: #ffb300;
+  border: none;
+  border-radius: 28px;
+  padding: 10px 20px;
+  color: #663c00;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1rem;
+  box-shadow: 0 4px 14px rgba(255,179,0,0.75);
+  transition: background-color 0.3s ease;
+  user-select: none;
+}
+.referral button:hover {
+  background: #ffc933;
+}
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  max-width: 380px;
+  width: 100%;
+  margin-bottom: 40px;
+}
+.action-buttons button {
+  width: 160px;
+  background-image: linear-gradient(135deg, #004080 10%, #ff6f00 90%);
+  box-shadow: 0 6px 20px rgba(255,111,0,0.7);
+  transition: background-image 0.35s ease;
+}
+.action-buttons button:hover {
+  background-image: linear-gradient(135deg, #002741 10%, #ffa620 90%);
+}
+.description {
+  max-width: 420px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.5;
+  text-align: center;
+  color: #003366;
+  border: 2px solid #004080;
+  border-radius: 16px;
+  padding: 24px 30px;
+  box-shadow: inset 0 0 14px #a8cae8;
+  user-select: none;
+}
+/* Earn tasks and other pages styles omitted for brevity, use previous CSS */
