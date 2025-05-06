@@ -8,13 +8,13 @@ window.fbAsyncInit = function() {
   });
 };
 
-// App globals
 const loginContainer = document.getElementById('login-container');
 const pages = {
   balance: document.getElementById('page-balance'),
   earn: document.getElementById('page-earn'),
   withdraw: document.getElementById('page-withdraw'),
 };
+
 const navButtons = {
   balance: document.getElementById('nav-balance'),
   earn: document.getElementById('nav-earn'),
@@ -22,7 +22,6 @@ const navButtons = {
   logout: document.getElementById('nav-logout'),
 };
 
-// Login elements
 const loginPage = document.getElementById('login-page');
 const registerPage = document.getElementById('register-page');
 const showRegisterLink = document.getElementById('show-register');
@@ -35,35 +34,30 @@ const registerBtn = document.getElementById('register-btn');
 const regEmailInput = document.getElementById('reg-email-input');
 const regPasswordInput = document.getElementById('reg-password-input');
 
-// Balance & referral
 const balanceAmountEl = document.getElementById('balance-amount');
 const referralLinkInput = document.getElementById('referral-link');
 const copyReferralBtn = document.getElementById('copy-referral-btn');
 const userLevelEl = document.getElementById('user-level');
 const inviteCountEl = document.getElementById('invite-count');
 
-// Earn buttons and invite
 const followFacebookBtn = document.getElementById('follow-facebook-btn');
 const followTwitterBtn = document.getElementById('follow-twitter-btn');
 const followYoutubeBtn = document.getElementById('follow-youtube-btn');
 const twitterLikeBtn = document.getElementById('twitter-like-btn');
 const inviteBtn = document.getElementById('invite-btn');
 
-// Withdraw form
 const withdrawForm = document.getElementById('withdraw-form');
 const withdrawAmountInput = document.getElementById('withdraw-amount');
 const withdrawMethodSelect = document.getElementById('withdraw-method');
 const accountDetailsInput = document.getElementById('account-details');
 
-// Videos container
 const taskVideosContainer = document.getElementById('task-videos');
 
-// LocalStorage keys, current user
 const storageKey = 'earnify_users';
 const loginStorageKey = 'earnify_logged_in';
 let currentUser = null;
 
-// Utils
+// Helper functions for localStorage
 function getUsers() {
   const str = localStorage.getItem(storageKey);
   return str ? JSON.parse(str) : {};
@@ -89,7 +83,6 @@ function logoutUser() {
   localStorage.removeItem(loginStorageKey);
   currentUser = null;
 }
-
 function clearInputs() {
   emailInput.value = '';
   passwordInput.value = '';
@@ -97,7 +90,6 @@ function clearInputs() {
   regPasswordInput.value = '';
 }
 
-// Show/hide pages
 function showLogin() {
   loginContainer.style.display = 'block';
   Object.values(pages).forEach(p=>p.hidden=true);
@@ -127,12 +119,11 @@ function setActiveNav(name) {
     navButtons[key].setAttribute('aria-current', isActive ? 'page' : 'false');
   });
 }
-// Referral link generator
+
 function generateReferralLink(email) {
   const base = window.location.origin || 'https://earnify.example.com';
   return `${base}/?ref=${encodeURIComponent(email)}`;
 }
-// Refresh UI with current user data
 function refreshUserUI() {
   if(!currentUser) return;
   balanceAmountEl.textContent = currentUser.balance.toLocaleString();
@@ -145,12 +136,11 @@ function refreshUserUI() {
   followYoutubeBtn.disabled = currentUser.followedYoutube || false;
   twitterLikeBtn.disabled = currentUser.likedRetweetedTwitter || false;
 }
-// Daily login bonus
 function tryClaimLoginBonus() {
   if(!currentUser) return;
   const lastBonus = currentUser.lastLoginBonus || 0;
   let now = Date.now();
-  if(now - lastBonus >= 86400000) { // 24 * 60 * 60 * 1000
+  if(now - lastBonus >= 86400000) {
     currentUser.balance += 1000;
     currentUser.lastLoginBonus = now;
     updateUser(currentUser);
@@ -158,7 +148,8 @@ function tryClaimLoginBonus() {
     alert('🎉 Daily login bonus ₦1000 credited!');
   }
 }
-// Login/Register Handlers
+
+// Attach event listeners
 fbLoginBtn.onclick = () => {
   FB.login(response => {
     if(response.authResponse) {
@@ -237,12 +228,17 @@ navButtons.earn.onclick = () => showPage('earn');
 navButtons.withdraw.onclick = () => showPage('withdraw');
 navButtons.logout.onclick = logoutBtn.onclick;
 copyReferralBtn.onclick = () => {
-  referralLinkInput.select();
-  referralLinkInput.setSelectionRange(0, 99999);
-  document.execCommand('copy');
-  alert('Referral link copied!');
+  if (navigator.clipboard && window.isSecureContext) {
+    // navigator clipboard api method'
+    navigator.clipboard.writeText(referralLinkInput.value).then(() => alert('Referral link copied!'), () => alert('Failed to copy referral link.'));
+  } else {
+    // fallback
+    referralLinkInput.select();
+    referralLinkInput.setSelectionRange(0, 99999);
+    if(document.execCommand('copy')) alert('Referral link copied!');
+    else alert('Failed to copy referral link.');
+  }
 };
-// Earnings buttons handlers
 function followEarn(platform, url, key, amount, btn) {
   if(currentUser[key]) {
     alert(`You already earned ₦${amount.toLocaleString()} for following ${platform}.`);
@@ -276,7 +272,6 @@ twitterLikeBtn.onclick = () => {
     twitterLikeBtn.disabled = true;
   }
 };
-// Video watch earn
 const FIVE_MINUTES = 5 * 60 * 1000;
 let videoTimers = {};
 let videoStatus = {};
@@ -308,7 +303,6 @@ function attachVideoButtons() {
   });
 }
 attachVideoButtons();
-// Invite system
 inviteBtn.onclick = () => {
   if(currentUser.level >= 10) {
     alert('Max level 10 reached.');
@@ -331,7 +325,6 @@ inviteBtn.onclick = () => {
   updateUser(currentUser);
   refreshUserUI();
 };
-// Withdrawal form submit
 withdrawForm.onsubmit = e => {
   e.preventDefault();
   if(!currentUser) {
@@ -341,7 +334,6 @@ withdrawForm.onsubmit = e => {
   const amount = Number(withdrawAmountInput.value);
   const method = withdrawMethodSelect.value;
   const details = accountDetailsInput.value.trim();
-
   if(!amount || amount < 250000) {
     alert('Minimum withdrawal amount is ₦250,000.');
     return;
@@ -358,7 +350,6 @@ withdrawForm.onsubmit = e => {
     alert('Please enter valid account details.');
     return;
   }
-
   currentUser.balance -= amount;
   updateUser(currentUser);
   refreshUserUI();
@@ -366,22 +357,30 @@ withdrawForm.onsubmit = e => {
   withdrawForm.reset();
   showPage('balance');
 };
-// Navigation buttons on Balance page
+
 document.getElementById('goto-withdraw-btn').onclick = () => showPage('withdraw');
 document.getElementById('goto-earn-btn').onclick = () => showPage('earn');
-// Initialization
+
 function init() {
   currentUser = getCurrentUser();
+  // Check for referral in URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const ref = urlParams.get('ref');
+  if(ref) {
+    // Store referral if not already stored for new visitors (you can expand this logic as needed)
+    localStorage.setItem('earnify_referral', ref);
+  }
   if(currentUser) {
     showPage('balance');
     refreshUserUI();
     tryClaimLoginBonus();
     logoutBtn.style.display = 'inline-block';
-    document.querySelector('nav').style.display = 'flex';
+    Object.values(navButtons).forEach(btn => btn.style.display = 'inline-block');
   } else {
     showLogin();
     logoutBtn.style.display = 'none';
-    document.querySelector('nav').style.display = 'none';
+    Object.values(navButtons).forEach(btn => btn.style.display = 'none');
   }
 }
+
 document.addEventListener('DOMContentLoaded', init);
