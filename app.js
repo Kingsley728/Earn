@@ -2,7 +2,7 @@
   // Facebook SDK initialization
   window.fbAsyncInit = function() {
     FB.init({
-      appId      : 'YOUR_FACEBOOK_APP_ID', // Replace with your real Facebook App ID
+      appId      : 'YOUR_FACEBOOK_APP_ID', // Replace with your Facebook App ID
       cookie     : true,
       xfbml      : false,
       version    : 'v17.0'
@@ -61,13 +61,10 @@
   const withdrawMethodSelect = document.getElementById('withdraw-method');
   const accountDetailsInput = document.getElementById('account-details');
 
-  // Videos container (hardcoded in HTML)
-
   const storageKey = 'earnify_users';
   const loginStorageKey = 'earnify_logged_in';
   let currentUser = null;
 
-  // Utils
   function getUsers() {
     const str = localStorage.getItem(storageKey);
     return str ? JSON.parse(str) : {};
@@ -101,7 +98,7 @@
   }
   function showLogin() {
     loginContainer.style.display = 'block';
-    Object.values(pages).forEach(p => p.hidden = true);
+    Object.values(pages).forEach(p=>p.hidden=true);
     burgerMenu.style.display = 'none';
     logoutBtn.style.display = 'none';
     clearInputs();
@@ -110,7 +107,7 @@
   }
   function showRegister() {
     loginContainer.style.display = 'block';
-    Object.values(pages).forEach(p => p.hidden = true);
+    Object.values(pages).forEach(p=>p.hidden=true);
     burgerMenu.style.display = 'none';
     logoutBtn.style.display = 'none';
     clearInputs();
@@ -136,7 +133,7 @@
     return `${base}/?ref=${encodeURIComponent(email)}`;
   }
   function refreshUserUI() {
-    if (!currentUser) return;
+    if(!currentUser) return;
     balanceAmountEl.textContent = currentUser.balance.toLocaleString();
     userLevelEl.textContent = currentUser.level || 1;
     inviteCountEl.textContent = currentUser.invites || 0;
@@ -148,10 +145,10 @@
     twitterLikeBtn.disabled = currentUser.likedRetweetedTwitter || false;
   }
   function tryClaimLoginBonus() {
-    if (!currentUser) return;
+    if(!currentUser) return;
     const lastBonus = currentUser.lastLoginBonus || 0;
     const now = Date.now();
-    if (now - lastBonus >= 86400000) {
+    if(now - lastBonus >= 86400000) {
       currentUser.balance += 1000;
       currentUser.lastLoginBonus = now;
       updateUser(currentUser);
@@ -159,14 +156,14 @@
       alert('🎉 Daily login bonus ₦1000 credited!');
     }
   }
-  // Event bindings for login/register
+
   fbLoginBtn.addEventListener('click', () => {
     FB.login(response => {
-      if (response.authResponse) {
-        FB.api('/me', {fields: 'id,name,email'}, user => {
+      if(response.authResponse) {
+        FB.api('/me',{fields:'id,name,email'}, user=>{
           let email = user.email || `${user.id}@fb.fake`;
           let users = getUsers();
-          if (!users[email]) {
+          if(!users[email]) {
             users[email] = {
               email,
               password: '',
@@ -189,14 +186,14 @@
           tryClaimLoginBonus();
         });
       } else alert('Facebook login failed or cancelled.');
-    }, {scope: 'email,public_profile'});
+    }, {scope:'email,public_profile'});
   });
   emailLoginBtn.addEventListener('click', () => {
     let email = emailInput.value.trim().toLowerCase();
     let pwd = passwordInput.value;
     let users = getUsers();
-    if (!users[email]) return alert('User not found, please register.');
-    if (users[email].password !== pwd) return alert('Incorrect password.');
+    if(!users[email]) return alert('User not found, please register.');
+    if(users[email].password !== pwd) return alert('Incorrect password.');
     currentUser = users[email];
     saveCurrentUser(currentUser);
     showPage('balance');
@@ -206,9 +203,9 @@
   registerBtn.addEventListener('click', () => {
     let email = regEmailInput.value.trim().toLowerCase();
     let pwd = regPasswordInput.value;
-    if (!email || !pwd) return alert('Please enter email and password.');
+    if(!email || !pwd) return alert('Please enter email and password.');
     let users = getUsers();
-    if (users[email]) return alert('User exists. Please login.');
+    if(users[email]) return alert('User exists. Please login.');
     users[email] = {
       email,
       password: pwd,
@@ -242,10 +239,8 @@
     showLogin();
   });
   copyReferralBtn.addEventListener('click', () => {
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(referralLinkInput.value)
-        .then(() => alert('Referral link copied!'))
-        .catch(() => fallbackCopyText());
+    if(navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(referralLinkInput.value).then(() => alert('Referral link copied!'), () => fallbackCopyText());
     } else {
       fallbackCopyText();
     }
@@ -253,16 +248,16 @@
   function fallbackCopyText() {
     referralLinkInput.select();
     referralLinkInput.setSelectionRange(0, 99999);
-    if (document.execCommand('copy')) alert('Referral link copied!');
+    if(document.execCommand('copy')) alert('Referral link copied!');
     else alert('Failed to copy referral link.');
   }
   function followEarn(platform, url, key, amount, btn) {
-    if (currentUser[key]) {
+    if(currentUser[key]) {
       alert(`You already earned ₦${amount.toLocaleString()} for following ${platform}.`);
       return;
     }
     window.open(url, '_blank');
-    if (confirm(`Confirm you followed our ${platform} page to earn ₦${amount.toLocaleString()}.`)) {
+    if(confirm(`Confirm you followed our ${platform} page to earn ₦${amount.toLocaleString()}.`)) {
       currentUser.balance += amount;
       currentUser[key] = true;
       updateUser(currentUser);
@@ -275,12 +270,12 @@
   followTwitterBtn.addEventListener('click', () => followEarn('Twitter', 'https://twitter.com/youraccount', 'followedTwitter', 5000, followTwitterBtn));
   followYoutubeBtn.addEventListener('click', () => followEarn('YouTube', 'https://youtube.com/@learnwithugo', 'followedYoutube', 5000, followYoutubeBtn));
   twitterLikeBtn.addEventListener('click', () => {
-    if (currentUser.likedRetweetedTwitter) {
+    if(currentUser.likedRetweetedTwitter) {
       alert('Already earned for liking & retweeting.');
       return;
     }
     window.open('https://twitter.com/youraccount/status/1234567890', '_blank');
-    if (confirm('Confirm you liked & retweeted our Twitter post to earn ₦500.')) {
+    if(confirm('Confirm you liked & retweeted our Twitter post to earn ₦500.')) {
       currentUser.balance += 500;
       currentUser.likedRetweetedTwitter = true;
       updateUser(currentUser);
@@ -293,11 +288,11 @@
   let videoTimers = {};
   let videoStatus = {};
   function startWatchTimer(videoId, btn) {
-    if (videoStatus[videoId]) {
+    if(videoStatus[videoId]) {
       alert('Video already watched.');
       return;
     }
-    if (videoTimers[videoId]) {
+    if(videoTimers[videoId]) {
       alert('Already watching this video.');
       return;
     }
@@ -321,19 +316,19 @@
   }
   attachVideoButtons();
   inviteBtn.addEventListener('click', () => {
-    if (currentUser.level >= 10) {
+    if(currentUser.level >= 10) {
       alert('Max level 10 reached.');
       return;
     }
     const friendEmail = prompt('Enter email address friend to invite:');
-    if (!friendEmail || !friendEmail.includes('@')) {
+    if(!friendEmail || !friendEmail.includes('@')) {
       alert('Enter a valid email.');
       return;
     }
     currentUser.invites = (currentUser.invites || 0) + 1;
     currentUser.balance += 800;
     const newLevel = Math.min(10, Math.floor(currentUser.invites / 5) + 1);
-    if (newLevel !== currentUser.level) {
+    if(newLevel !== currentUser.level) {
       currentUser.level = newLevel;
       alert(`🎉 Level Up! You are now level ${newLevel}`);
     } else {
@@ -344,26 +339,26 @@
   });
   withdrawForm.addEventListener('submit', e => {
     e.preventDefault();
-    if (!currentUser) {
+    if(!currentUser) {
       alert('Please login first.');
       return;
     }
     const amount = Number(withdrawAmountInput.value);
     const method = withdrawMethodSelect.value;
     const details = accountDetailsInput.value.trim();
-    if (!amount || amount < 250000) {
+    if(!amount || amount < 250000) {
       alert('Minimum withdrawal amount is ₦250,000.');
       return;
     }
-    if (amount > currentUser.balance) {
+    if(amount > currentUser.balance) {
       alert('Insufficient balance.');
       return;
     }
-    if (!method) {
+    if(!method) {
       alert('Please select a withdrawal method.');
       return;
     }
-    if (details.length < 3) {
+    if(details.length < 3) {
       alert('Please enter valid account details.');
       return;
     }
@@ -377,50 +372,49 @@
   document.getElementById('goto-withdraw-btn').addEventListener('click', () => showPage('withdraw'));
   document.getElementById('goto-earn-btn').addEventListener('click', () => showPage('earn'));
 
+  // Burger menu toggle and navigation handling
+  const burgerBtn = document.getElementById('burger-menu-btn');
+  const burgerMenu = document.getElementById('burger-menu');
+  burgerBtn.addEventListener('click', () => {
+    const expanded = burgerBtn.getAttribute('aria-expanded') === 'true';
+    burgerBtn.setAttribute('aria-expanded', !expanded);
+    burgerMenu.hidden = expanded;
+  });
+
+  burgerMenu.querySelectorAll('button[data-page]').forEach(button => {
+    button.addEventListener('click', () => {
+      const page = button.getAttribute('data-page');
+      showPage(page);
+      burgerMenu.hidden = true;
+      burgerBtn.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // Logout in burger menu
+  document.getElementById('nav-logout').addEventListener('click', () => {
+    logoutUser();
+    currentUser = null;
+    showLogin();
+    burgerMenu.hidden = true;
+    burgerBtn.setAttribute('aria-expanded', 'false');
+  });
+
   function init() {
     currentUser = getCurrentUser();
-    if (currentUser) {
+    if(currentUser) {
       showPage('balance');
       refreshUserUI();
       tryClaimLoginBonus();
       logoutBtn.style.display = 'inline-block';
-      document.getElementById('burger-menu-btn').style.display = 'block';
+      burgerBtn.style.display = 'block';
+      burgerMenu.hidden = true;
     } else {
       showLogin();
       logoutBtn.style.display = 'none';
-      document.getElementById('burger-menu-btn').style.display = 'none';
+      burgerBtn.style.display = 'none';
+      burgerMenu.hidden = true;
     }
   }
-  document.addEventListener('DOMContentLoaded', () => {
-    // Burger menu toggling
-    const burgerBtn = document.getElementById('burger-menu-btn');
-    const burgerMenu = document.getElementById('burger-menu');
-    burgerBtn.addEventListener('click', () => {
-      const expanded = burgerBtn.getAttribute('aria-expanded') === 'true';
-      burgerBtn.setAttribute('aria-expanded', !expanded);
-      burgerMenu.hidden = expanded;
-    });
-    // Burger menu navigation
-    burgerMenu.querySelectorAll('button[data-page]').forEach(button => {
-      button.addEventListener('click', () => {
-        const page = button.getAttribute('data-page');
-        showPage(page);
-        burgerMenu.hidden = true;
-        burgerBtn.setAttribute('aria-expanded', 'false');
-      });
-    });
-    // Logout menu button
-    document.getElementById('nav-logout').addEventListener('click', () => {
-      logoutUser();
-      currentUser = null;
-      showLogin();
-      burgerMenu.hidden = true;
-      burgerBtn.setAttribute('aria-expanded', 'false');
-    });
 
-    init();
-  });
+  document.addEventListener('DOMContentLoaded', init);
 })();
-</script>
-</body>
-</html>
