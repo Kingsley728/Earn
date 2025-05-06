@@ -1,10 +1,11 @@
 (() => {
+  // Initialize Facebook SDK
   window.fbAsyncInit = function() {
     FB.init({
-      appId: 'YOUR_FACEBOOK_APP_ID', // Replace with your App ID
-      cookie: true,
-      xfbml: false,
-      version: 'v17.0',
+      appId      : 'YOUR_FACEBOOK_APP_ID', // REPLACE THIS with your Facebook App ID
+      cookie     : true,
+      xfbml      : false,
+      version    : 'v17.0'
     });
   };
 
@@ -14,16 +15,19 @@
     earn: document.getElementById('page-earn'),
     withdraw: document.getElementById('page-withdraw'),
   };
+
   const navButtons = {
     balance: document.querySelector('nav#burger-menu button[data-page="balance"]'),
     earn: document.querySelector('nav#burger-menu button[data-page="earn"]'),
     withdraw: document.querySelector('nav#burger-menu button[data-page="withdraw"]'),
-    logout: document.getElementById('logout-btn'),
+    logout: document.getElementById('nav-logout'),
   };
+
   const burgerBtn = document.getElementById('burger-menu-btn');
   const burgerMenu = document.getElementById('burger-menu');
-  const logoutMenuBtn = document.getElementById('nav-logout');
+  const logoutBtn = document.getElementById('logout-btn');
 
+  // Login/Register elements
   const loginPage = document.getElementById('login-page');
   const registerPage = document.getElementById('register-page');
   const showRegisterLink = document.getElementById('show-register');
@@ -36,18 +40,21 @@
   const regEmailInput = document.getElementById('reg-email-input');
   const regPasswordInput = document.getElementById('reg-password-input');
 
+  // Balance and referral elements
   const balanceAmountEl = document.getElementById('balance-amount');
   const referralLinkInput = document.getElementById('referral-link');
   const copyReferralBtn = document.getElementById('copy-referral-btn');
   const userLevelEl = document.getElementById('user-level');
   const inviteCountEl = document.getElementById('invite-count');
 
+  // Earn buttons and invite
   const followFacebookBtn = document.getElementById('follow-facebook-btn');
   const followTwitterBtn = document.getElementById('follow-twitter-btn');
   const followYoutubeBtn = document.getElementById('follow-youtube-btn');
   const twitterLikeBtn = document.getElementById('twitter-like-btn');
   const inviteBtn = document.getElementById('invite-btn');
 
+  // Withdraw form elements
   const withdrawForm = document.getElementById('withdraw-form');
   const withdrawAmountInput = document.getElementById('withdraw-amount');
   const withdrawMethodSelect = document.getElementById('withdraw-method');
@@ -57,77 +64,93 @@
   const loginStorageKey = 'earnify_logged_in';
   let currentUser = null;
 
-  // Utilities
+  // Utility functions
   function getUsers() {
     const str = localStorage.getItem(storageKey);
     return str ? JSON.parse(str) : {};
   }
+
   function saveUsers(users) {
     localStorage.setItem(storageKey, JSON.stringify(users));
   }
+
   function saveCurrentUser(user) {
     localStorage.setItem(loginStorageKey, user.email);
   }
+
   function getCurrentUser() {
     const email = localStorage.getItem(loginStorageKey);
     if (!email) return null;
     const users = getUsers();
     return users[email] || null;
   }
+
   function updateUser(user) {
     const users = getUsers();
     users[user.email] = user;
     saveUsers(users);
   }
-  function logoutUser() {
+
+  function logout() {
     localStorage.removeItem(loginStorageKey);
     currentUser = null;
   }
+
   function clearInputs() {
     emailInput.value = '';
     passwordInput.value = '';
     regEmailInput.value = '';
     regPasswordInput.value = '';
   }
+
+  // Page display functions
   function showLogin() {
     loginContainer.style.display = 'block';
-    Object.values(pages).forEach(p=>p.hidden=true);
+    Object.values(pages).forEach(p => (p.hidden = true));
     burgerMenu.style.display = 'none';
     logoutBtn.style.display = 'none';
+    burgerBtn.style.display = 'none';
     clearInputs();
     loginPage.hidden = false;
     registerPage.hidden = true;
-    burgerBtn.style.display = 'none';
   }
+
   function showRegister() {
     loginContainer.style.display = 'block';
-    Object.values(pages).forEach(p=>p.hidden=true);
+    Object.values(pages).forEach(p => (p.hidden = true));
     burgerMenu.style.display = 'none';
     logoutBtn.style.display = 'none';
+    burgerBtn.style.display = 'none';
     clearInputs();
     loginPage.hidden = true;
     registerPage.hidden = false;
-    burgerBtn.style.display = 'none';
   }
-  function showPage(name) {
+
+  function showPage(pageName) {
     loginContainer.style.display = 'none';
-    Object.keys(pages).forEach(key=>pages[key].hidden = (key !== name));
+    Object.keys(pages).forEach(key => {
+      pages[key].hidden = key !== pageName;
+    });
     burgerMenu.style.display = 'none';
     logoutBtn.style.display = 'inline-block';
     burgerBtn.style.display = 'inline-flex';
-    setActiveNav(name);
+    setActiveNav(pageName);
   }
-  function setActiveNav(name) {
+
+  function setActiveNav(activePage) {
     Object.keys(navButtons).forEach(key => {
-      const isActive = key === name;
+      const isActive = key === activePage;
       navButtons[key].classList.toggle('active', isActive);
       navButtons[key].setAttribute('aria-current', isActive ? 'page' : 'false');
     });
   }
+
   function generateReferralLink(email) {
-    const base = window.location.origin || 'https://earnify.example.com';
-    return `${base}/?ref=${encodeURIComponent(email)}`;
+    const url = new URL(window.location.origin);
+    url.searchParams.set('ref', email);
+    return url.toString();
   }
+
   function refreshUserUI() {
     if (!currentUser) return;
     balanceAmountEl.textContent = currentUser.balance.toLocaleString();
@@ -140,99 +163,86 @@
     followYoutubeBtn.disabled = currentUser.followedYoutube || false;
     twitterLikeBtn.disabled = currentUser.likedRetweetedTwitter || false;
   }
-  function tryClaimLoginBonus() {
+
+  // Daily Login Bonus
+  function tryClaimDailyLoginBonus() {
     if (!currentUser) return;
-    const lastBonus = currentUser.lastLoginBonus || 0;
     const now = Date.now();
-    if (now - lastBonus >= 86400000) {
+    const dayMs = 24 * 60 * 60 * 1000;
+    if (!currentUser.lastLoginBonus || now - currentUser.lastLoginBonus > dayMs) {
       currentUser.balance += 1000;
       currentUser.lastLoginBonus = now;
       updateUser(currentUser);
       refreshUserUI();
-      alert('🎉 Daily login bonus ₦1000 credited!');
+      alert('🎉 Daily login bonus of ₦1000 credited!');
     }
   }
 
-  // Event listeners for menu toggle
-  burgerBtn.addEventListener('click', () => {
-    const expanded = burgerBtn.getAttribute('aria-expanded') === 'true';
-    burgerBtn.setAttribute('aria-expanded', !expanded);
-    burgerMenu.hidden = expanded;
-  });
-
-  // Navigation buttons
-  navButtons.balance.addEventListener('click', () => showPage('balance'));
-  navButtons.earn.addEventListener('click', () => showPage('earn'));
-  navButtons.withdraw.addEventListener('click', () => showPage('withdraw'));
-  navButtons.logout.addEventListener('click', () => {
-    logoutUser();
-    currentUser = null;
-    showLogin();
-    burgerMenu.hidden = true;
-    burgerBtn.setAttribute('aria-expanded', 'false');
-  });
-  burgerMenu.querySelectorAll('button[data-page]').forEach(button => {
-    button.addEventListener('click', function () {
-      showPage(this.getAttribute('data-page'));
-      burgerMenu.hidden = true;
-      burgerBtn.setAttribute('aria-expanded', 'false');
-    });
-  });
+  // Event Handlers
 
   fbLoginBtn.addEventListener('click', () => {
-    FB.login(response => {
-      if (response.authResponse) {
-        FB.api('/me', { fields: 'id,name,email' }, user => {
-          let email = user.email || `${user.id}@fb.fake`;
-          let users = getUsers();
-          if (!users[email]) {
-            users[email] = {
-              email,
-              password: '',
-              balance: 1000,
-              invites: 0,
-              level: 1,
-              lastLoginBonus: 0,
-              followedFacebook: false,
-              followedTwitter: false,
-              followedYoutube: false,
-              likedRetweetedTwitter: false,
-              videoWatched: {}
-            };
-            saveUsers(users);
-          }
-          currentUser = users[email];
-          saveCurrentUser(currentUser);
-          showPage('balance');
-          refreshUserUI();
-          tryClaimLoginBonus();
-        });
-      } else alert('Facebook login failed or cancelled.');
-    }, { scope: 'email,public_profile' });
+    FB.login(
+      function (response) {
+        if (response.authResponse) {
+          FB.api('/me', { fields: 'email' }, function (userInfo) {
+            let email = userInfo.email || `${userInfo.id}@fb.fake`;
+            let users = getUsers();
+            if (!users[email]) {
+              users[email] = {
+                email,
+                password: '',
+                balance: 1000,
+                invites: 0,
+                level: 1,
+                lastLoginBonus: 0,
+                followedFacebook: false,
+                followedTwitter: false,
+                followedYoutube: false,
+                likedRetweetedTwitter: false,
+                videoWatched: {}
+              };
+              saveUsers(users);
+            }
+            currentUser = users[email];
+            saveCurrentUser(currentUser);
+            showPage('balance');
+            refreshUserUI();
+            tryClaimDailyLoginBonus();
+          });
+        } else {
+          alert('Facebook login was cancelled or failed.');
+        }
+      },
+      { scope: 'email,public_profile' }
+    );
   });
 
   emailLoginBtn.addEventListener('click', () => {
     let email = emailInput.value.trim().toLowerCase();
-    let pwd = passwordInput.value;
+    let password = passwordInput.value;
     let users = getUsers();
-    if (!users[email]) return alert('User not found, please register.');
-    if (users[email].password !== pwd) return alert('Incorrect password.');
+
+    if (!users[email]) return alert('User not found. Please register.');
+    if (users[email].password !== password) return alert('Incorrect password.');
+
     currentUser = users[email];
     saveCurrentUser(currentUser);
     showPage('balance');
     refreshUserUI();
-    tryClaimLoginBonus();
+    tryClaimDailyLoginBonus();
   });
 
   registerBtn.addEventListener('click', () => {
     let email = regEmailInput.value.trim().toLowerCase();
-    let pwd = regPasswordInput.value;
-    if (!email || !pwd) return alert('Please enter email and password.');
+    let password = regPasswordInput.value;
+    if (!email || !password) return alert('Please enter both email and password.');
+
     let users = getUsers();
-    if (users[email]) return alert('User exists. Please login.');
+    if (users[email]) return alert('User already exists. Please login.');
+
     users[email] = {
       email,
-      password: pwd,
+      password,
       balance: 1000,
       invites: 0,
       level: 1,
@@ -251,34 +261,61 @@
   showRegisterLink.addEventListener('click', showRegister);
   showLoginLink.addEventListener('click', showLogin);
 
-  referralLinkInput.addEventListener('click', () => {
-    referralLinkInput.select();
+  logoutBtn.addEventListener('click', () => {
+    logout();
+    showLogin();
+  });
+
+  navButtons.logout.addEventListener('click', () => {
+    logout();
+    showLogin();
+    burgerMenu.hidden = true;
+    burgerBtn.setAttribute('aria-expanded', 'false');
+  });
+
+  burgerBtn.addEventListener('click', () => {
+    const expanded = burgerBtn.getAttribute('aria-expanded') === 'true';
+    burgerBtn.setAttribute('aria-expanded', !expanded);
+    burgerMenu.hidden = expanded;
+  });
+
+  Object.keys(navButtons).forEach(key => {
+    if (key !== 'logout') {
+      navButtons[key].addEventListener('click', () => {
+        showPage(key);
+        burgerMenu.hidden = true;
+        burgerBtn.setAttribute('aria-expanded', 'false');
+      });
+    }
   });
 
   copyReferralBtn.addEventListener('click', () => {
     if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(referralLinkInput.value)
         .then(() => alert('Referral link copied!'))
-        .catch(() => fallbackCopyText());
+        .catch(() => fallbackCopy());
     } else {
-      fallbackCopyText();
+      fallbackCopy();
     }
   });
 
-  function fallbackCopyText() {
+  function fallbackCopy() {
     referralLinkInput.select();
     referralLinkInput.setSelectionRange(0, 99999);
-    if (document.execCommand('copy')) alert('Referral link copied!');
-    else alert('Failed to copy referral link.');
+    if (document.execCommand('copy')) {
+      alert('Referral link copied!');
+    } else {
+      alert('Failed to copy referral link.');
+    }
   }
 
   function followEarn(platform, url, key, amount, btn) {
     if (currentUser[key]) {
-      alert(`You already earned ₦${amount.toLocaleString()} for following ${platform}.`);
+      alert(`You have already earned ₦${amount.toLocaleString()} for following ${platform}.`);
       return;
     }
     window.open(url, '_blank', 'noopener');
-    if (confirm(`Confirm you followed our ${platform} page to earn ₦${amount.toLocaleString()}.`)) {
+    if (confirm(`Did you follow our ${platform} page? Click OK to confirm and earn ₦${amount.toLocaleString()}.`)) {
       currentUser.balance += amount;
       currentUser[key] = true;
       updateUser(currentUser);
@@ -287,10 +324,15 @@
       btn.disabled = true;
     }
   }
-
-  followFacebookBtn.addEventListener('click', () => followEarn('Facebook', 'https://www.facebook.com/share/1CQTgX1XFw/?mibextid=qi2Omg', 'followedFacebook', 5000, followFacebookBtn));
-  followTwitterBtn.addEventListener('click', () => followEarn('Twitter', 'https://twitter.com/youraccount', 'followedTwitter', 5000, followTwitterBtn));
-  followYoutubeBtn.addEventListener('click', () => followEarn('YouTube', 'https://youtube.com/@learnwithugo', 'followedYoutube', 5000, followYoutubeBtn));
+  followFacebookBtn.addEventListener('click', () =>
+    followEarn('Facebook', 'https://www.facebook.com/share/1CQTgX1XFw/?mibextid=qi2Omg', 'followedFacebook', 5000, followFacebookBtn)
+  );
+  followTwitterBtn.addEventListener('click', () =>
+    followEarn('Twitter', 'https://twitter.com/youraccount', 'followedTwitter', 5000, followTwitterBtn)
+  );
+  followYoutubeBtn.addEventListener('click', () =>
+    followEarn('YouTube', 'https://youtube.com/@learnwithugo', 'followedYoutube', 5000, followYoutubeBtn)
+  );
 
   twitterLikeBtn.addEventListener('click', () => {
     if (currentUser.likedRetweetedTwitter) {
@@ -298,7 +340,7 @@
       return;
     }
     window.open('https://twitter.com/youraccount/status/1234567890', '_blank', 'noopener');
-    if (confirm('Confirm you liked & retweeted our Twitter post to earn ₦500.')) {
+    if (confirm('Did you like and retweet our Twitter post? Click OK to confirm and earn ₦500.')) {
       currentUser.balance += 500;
       currentUser.likedRetweetedTwitter = true;
       updateUser(currentUser);
@@ -314,14 +356,14 @@
 
   function startWatchTimer(videoId, btn) {
     if (videoStatus[videoId]) {
-      alert('Video already watched.');
+      alert('You already earned for this video.');
       return;
     }
     if (videoTimers[videoId]) {
-      alert('Already watching this video.');
+      alert('You are already watching this video.');
       return;
     }
-    alert('Watch video for 5 minutes to earn ₦500.');
+    alert('Start watching the video. After 5 minutes, you will earn ₦500.');
     btn.disabled = true;
     videoTimers[videoId] = setTimeout(() => {
       currentUser.balance += 500;
@@ -335,21 +377,18 @@
     }, FIVE_MINUTES);
   }
 
-  function attachVideoButtons() {
-    document.querySelectorAll('.watch-video-btn').forEach(btn => {
-      btn.addEventListener('click', () => startWatchTimer(btn.dataset.videoId, btn));
-    });
-  }
-  attachVideoButtons();
+  document.querySelectorAll('.watch-video-btn').forEach(btn => {
+    btn.addEventListener('click', () => startWatchTimer(btn.dataset.videoId, btn));
+  });
 
   inviteBtn.addEventListener('click', () => {
     if (currentUser.level >= 10) {
-      alert('Max level 10 reached.');
+      alert('You have reached max level 10.');
       return;
     }
-    const friendEmail = prompt('Enter email address friend to invite:');
+    const friendEmail = prompt('Enter friend\'s email to invite:');
     if (!friendEmail || !friendEmail.includes('@')) {
-      alert('Enter a valid email.');
+      alert('Please enter a valid email.');
       return;
     }
     currentUser.invites = (currentUser.invites || 0) + 1;
@@ -357,9 +396,9 @@
     const newLevel = Math.min(10, Math.floor(currentUser.invites / 5) + 1);
     if (newLevel !== currentUser.level) {
       currentUser.level = newLevel;
-      alert(`🎉 Level Up! You are now level ${newLevel}`);
+      alert(`🎉 Congratulations! You leveled up to level ${newLevel}!`);
     } else {
-      alert('🎉 Invite successful! ₦800 credited.');
+      alert('🎉 Invite recorded! ₦800 credited!');
     }
     updateUser(currentUser);
     refreshUserUI();
@@ -368,7 +407,7 @@
   withdrawForm.addEventListener('submit', e => {
     e.preventDefault();
     if (!currentUser) {
-      alert('Please login first.');
+      alert('Please log in first.');
       return;
     }
     const amount = Number(withdrawAmountInput.value);
@@ -379,7 +418,7 @@
       return;
     }
     if (amount > currentUser.balance) {
-      alert('Insufficient balance.');
+      alert('Insufficient balance for withdrawal.');
       return;
     }
     if (!method) {
@@ -393,7 +432,7 @@
     currentUser.balance -= amount;
     updateUser(currentUser);
     refreshUserUI();
-    alert(`Withdrawal request of ₦${amount.toLocaleString()} via ${method} received. Processing: up to 7 days.`);
+    alert(`Withdrawal request of ₦${amount.toLocaleString()} via ${method} received. Processing will take up to 7 days.`);
     withdrawForm.reset();
     showPage('balance');
   });
@@ -406,15 +445,18 @@
     if (currentUser) {
       showPage('balance');
       refreshUserUI();
-      tryClaimLoginBonus();
-      logoutBtn.style.display = 'inline-block';
+      tryClaimDailyLoginBonus();
       burgerBtn.style.display = 'inline-flex';
       burgerMenu.hidden = true;
       burgerBtn.setAttribute('aria-expanded', 'false');
     } else {
       showLogin();
+      burgerBtn.style.display = 'none';
+      burgerMenu.hidden = true;
     }
   }
+
+  init();
 
   burgerBtn.addEventListener('click', () => {
     const expanded = burgerBtn.getAttribute('aria-expanded') === 'true';
@@ -424,27 +466,18 @@
 
   burgerMenu.querySelectorAll('button[data-page]').forEach(button => {
     button.addEventListener('click', () => {
-      showPage(button.getAttribute('data-page'));
+      const page = button.getAttribute('data-page');
+      showPage(page);
       burgerMenu.hidden = true;
       burgerBtn.setAttribute('aria-expanded', 'false');
     });
   });
 
-  document.getElementById('logout-btn').addEventListener('click', () => {
+  navButtons.logout.addEventListener('click', () => {
     logoutUser();
     currentUser = null;
     showLogin();
     burgerMenu.hidden = true;
     burgerBtn.setAttribute('aria-expanded', 'false');
   });
-
-  document.getElementById('nav-logout').addEventListener('click', () => {
-    logoutUser();
-    currentUser = null;
-    showLogin();
-    burgerMenu.hidden = true;
-    burgerBtn.setAttribute('aria-expanded', 'false');
-  });
-
-  document.addEventListener('DOMContentLoaded', init);
 })();
