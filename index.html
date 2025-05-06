@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Earnify - Social Earnings Platform</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <!-- Google Fonts Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&amp;display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -20,55 +21,54 @@
       <button role="menuitem" data-page="balance">Balance</button>
       <button role="menuitem" data-page="earn">Earn</button>
       <button role="menuitem" data-page="withdraw">Withdraw</button>
-      <button role="menuitem" id="logout-btn">Logout</button>
+      <button role="menuitem" id="nav-logout">Logout</button>
     </nav>
 
     <main>
-      <section id="login-container" aria-label="User authentication">
-
-        <div id="login-page" role="form" aria-label="Login form">
+      <!-- LOGIN CONTAINER -->
+      <div id="login-container" aria-live="polite" role="region" aria-label="Authentication Section">
+        <section id="login-page" role="form" aria-label="Login Form">
           <h2>Login</h2>
           <button id="fb-login-btn" aria-label="Login with Facebook">Login with Facebook</button>
-          <p style="text-align:center; margin: 16px 0;">OR</p>
+          <p style="text-align:center; margin: 16px 0; font-weight: 600;">OR</p>
           <label for="email-input">Email</label>
-          <input id="email-input" type="email" autocomplete="username" />
+          <input id="email-input" type="email" placeholder="Email" autocomplete="username" aria-required="true" />
           <label for="password-input">Password</label>
-          <input id="password-input" type="password" autocomplete="current-password" />
+          <input id="password-input" type="password" placeholder="Password" autocomplete="current-password" aria-required="true" />
           <button id="email-login-btn">Login</button>
           <p class="link-toggle" id="show-register">Don't have an account? Register here.</p>
-        </div>
-
-        <div id="register-page" role="form" aria-label="Registration form" hidden>
+        </section>
+        <section id="register-page" role="form" aria-label="Register Form" hidden>
           <h2>Register</h2>
           <label for="reg-email-input">Email</label>
-          <input id="reg-email-input" type="email" autocomplete="username" />
+          <input id="reg-email-input" type="email" placeholder="Email" autocomplete="username" aria-required="true" />
           <label for="reg-password-input">Password</label>
-          <input id="reg-password-input" type="password" autocomplete="new-password" />
+          <input id="reg-password-input" type="password" placeholder="Password" autocomplete="new-password" aria-required="true" />
           <button id="register-btn">Register</button>
           <p class="link-toggle" id="show-login">Already have an account? Login here.</p>
-        </div>
+        </section>
+      </div>
 
-      </section>
-
-      <section id="page-balance" class="page" hidden aria-label="Balance overview">
-        <div class="balance-box">
+      <!-- MAIN APP PAGES -->
+      <section id="page-balance" class="page" aria-label="Balance and Overview" tabindex="0" hidden>
+        <div class="balance-box" aria-live="assertive" aria-atomic="true" aria-relevant="text">
           <h3>&#8358;<span id="balance-amount">0</span></h3>
           <p>Your Current Balance</p>
         </div>
-        <div class="referral">
-          <input type="text" id="referral-link" readonly aria-label="Referral link" />
-          <button id="copy-referral-btn">Copy</button>
+        <div class="referral" aria-label="Referral Link">
+          <input type="text" id="referral-link" readonly aria-label="Referral link" value="" />
+          <button id="copy-referral-btn" aria-label="Copy referral link to clipboard">Copy</button>
         </div>
-        <div class="action-buttons">
-          <button id="goto-withdraw-btn">Withdraw</button>
-          <button id="goto-earn-btn">Keep Earning</button>
+        <div class="action-buttons" role="group" aria-label="Main actions">
+          <button id="goto-withdraw-btn" aria-controls="page-withdraw">Withdraw</button>
+          <button id="goto-earn-btn" aria-controls="page-earn">Keep Earning</button>
         </div>
-        <div class="description">
+        <div class="description" aria-label="How to Earn Description">
           <p>Earn money by following our Facebook, Twitter, YouTube accounts, watching videos, liking & retweeting, and inviting friends.</p>
         </div>
       </section>
 
-      <section id="page-earn" class="page" hidden aria-label="Earning tasks">
+      <section id="page-earn" class="page" aria-label="Earn Money Tasks" tabindex="0" hidden>
         <div class="task" id="follow-tasks">
           <h3>Follow Accounts (₦5000 each)</h3>
           <button id="follow-facebook-btn">Follow Facebook</button>
@@ -76,9 +76,8 @@
           <button id="follow-youtube-btn">Follow YouTube</button>
         </div>
         <div class="task" id="watch-videos">
-          <h3>Watch Videos to Earn (₦500 each)</h3>
-          <div id="task-videos">
-            <!-- Hardcoded videos (YouTube embeds with watch buttons) -->
+          <h3>Watch Videos to Earn (₦500 per video, 5 minutes)</h3>
+          <div id="task-videos" aria-label="Videos to watch">
             <div>
               <h4>Master TVFS Online Vetted Jobs 2023</h4>
               <iframe src="https://www.youtube.com/embed/X9HScNRpABc" allowfullscreen></iframe>
@@ -108,14 +107,14 @@
         </div>
         <div class="task" id="twitter-engagement">
           <h3>Twitter Like & Retweet (₦500 each)</h3>
-          <button id="twitter-like-btn">Like & Retweet</button>
+          <button id="twitter-like-btn" style="width:100%;">Like & Retweet</button>
         </div>
         <div class="task" id="invite-section">
           <h3>Invite Friends & Ranking</h3>
           <p>Earn ₦800 per invite. Level up every 5 invites (max 10 levels).</p>
           <p>Your Level: <span id="user-level">1</span></p>
           <p>Invites: <span id="invite-count">0</span></p>
-          <button id="invite-btn">Invite a Friend</button>
+          <button id="invite-btn" style="width:100%;">Invite a Friend</button>
         </div>
       </section>
 
@@ -139,7 +138,6 @@
       </section>
     </main>
   </div>
-
   <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
   <script src="app.js"></script>
 </body>
