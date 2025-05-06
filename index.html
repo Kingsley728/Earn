@@ -11,8 +11,7 @@
 <body>
   <div id="app" role="main" aria-label="Earnify Application">
     <header>
-      Earnify
-      <button id="logout-btn" aria-label="Logout">Logout</button>
+      <span>Earnify</span>
       <button id="burger-menu-btn" aria-label="Open menu" aria-haspopup="true" aria-controls="burger-menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -55,7 +54,7 @@
           <p>Your Current Balance</p>
         </div>
         <div class="referral" aria-label="Referral Link">
-          <input type="text" id="referral-link" readonly aria-label="Referral link" value="" />
+          <input type="text" id="referral-link" readonly aria-label="Referral link" />
           <button id="copy-referral-btn" aria-label="Copy referral link to clipboard">Copy</button>
         </div>
         <div class="action-buttons" role="group" aria-label="Main actions">
@@ -84,7 +83,31 @@
         <div class="task" id="watch-videos">
           <h3>Watch Videos to Earn (₦500 per video, 5 minutes)</h3>
           <div id="task-videos" aria-label="Videos to watch">
-            <!-- Videos inserted by JS -->
+            <div style="margin-bottom:40px;">
+              <h4 style="font-weight:600; color:#004080; margin-bottom:12px;">Master TVFS Online Vetted Jobs 2023</h4>
+              <iframe src="https://www.youtube.com/embed/X9HScNRpABc" frameborder="0" allowfullscreen></iframe>
+              <button class="watch-video-btn" data-video-id="X9HScNRpABc" style="width:100%; margin-top:12px;">Watch to Earn ₦500</button>
+            </div>
+            <div style="margin-bottom:40px;">
+              <h4 style="font-weight:600; color:#004080; margin-bottom:12px;">Writing a Research Proposal</h4>
+              <iframe src="https://www.youtube.com/embed/EoanSv_ga0I" frameborder="0" allowfullscreen></iframe>
+              <button class="watch-video-btn" data-video-id="EoanSv_ga0I" style="width:100%; margin-top:12px;">Watch to Earn ₦500</button>
+            </div>
+            <div style="margin-bottom:40px;">
+              <h4 style="font-weight:600; color:#004080; margin-bottom:12px;">How to become the best student in your school</h4>
+              <iframe src="https://www.youtube.com/embed/s4UGa1K_iME" frameborder="0" allowfullscreen></iframe>
+              <button class="watch-video-btn" data-video-id="s4UGa1K_iME" style="width:100%; margin-top:12px;">Watch to Earn ₦500</button>
+            </div>
+            <div style="margin-bottom:40px;">
+              <h4 style="font-weight:600; color:#004080; margin-bottom:12px;">How to download video from YouTube (No software)</h4>
+              <iframe src="https://www.youtube.com/embed/JNaQAbJ_Ajg" frameborder="0" allowfullscreen></iframe>
+              <button class="watch-video-btn" data-video-id="JNaQAbJ_Ajg" style="width:100%; margin-top:12px;">Watch to Earn ₦500</button>
+            </div>
+            <div style="margin-bottom:40px;">
+              <h4 style="font-weight:600; color:#004080; margin-bottom:12px;">Advanced Research | How To Write Research</h4>
+              <iframe src="https://www.youtube.com/embed/9rpCoWS1vzI" frameborder="0" allowfullscreen></iframe>
+              <button class="watch-video-btn" data-video-id="9rpCoWS1vzI" style="width:100%; margin-top:12px;">Watch to Earn ₦500</button>
+            </div>
           </div>
         </div>
         <div class="task" id="twitter-engagement">
@@ -120,7 +143,9 @@
         </form>
       </section>
     </main>
+  </div>
   <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
   <script src="app.js"></script>
 </body>
-</html>
+  </html>
+  
