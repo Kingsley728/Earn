@@ -2,150 +2,145 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Earnify - Social Earnings Platform</title>
-  <!-- Google Fonts Poppins -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div id="app" role="main" aria-label="Earnify Application">
+  <div id="app">
     <header>
       <span>Earnify</span>
-      <button id="burger-menu-btn" aria-label="Open menu" aria-haspopup="true" aria-controls="burger-menu" aria-expanded="false">
+      <button id="burger-menu-btn" aria-label="Open navigation menu" aria-haspopup="true" aria-controls="burger-menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </header>
+
     <nav id="burger-menu" role="menu" aria-label="Navigation menu" hidden>
       <button role="menuitem" data-page="balance">Balance</button>
       <button role="menuitem" data-page="earn">Earn</button>
       <button role="menuitem" data-page="withdraw">Withdraw</button>
-      <button role="menuitem" id="nav-logout">Logout</button>
+      <button role="menuitem" id="logout-btn">Logout</button>
     </nav>
+
     <main>
-      <!-- LOGIN CONTAINER -->
-      <div id="login-container" aria-live="polite" role="region" aria-label="Authentication Section">
-        <section id="login-page" role="form" aria-label="Login Form">
+      <section id="login-container" aria-label="User authentication">
+
+        <div id="login-page" role="form" aria-label="Login form">
           <h2>Login</h2>
           <button id="fb-login-btn" aria-label="Login with Facebook">Login with Facebook</button>
-          <p style="text-align:center; margin: 16px 0; font-weight: 600;">OR</p>
+          <p style="text-align:center; margin: 16px 0;">OR</p>
           <label for="email-input">Email</label>
-          <input id="email-input" type="email" placeholder="Email" autocomplete="username" aria-required="true" />
+          <input id="email-input" type="email" autocomplete="username" />
           <label for="password-input">Password</label>
-          <input id="password-input" type="password" placeholder="Password" autocomplete="current-password" aria-required="true" />
+          <input id="password-input" type="password" autocomplete="current-password" />
           <button id="email-login-btn">Login</button>
           <p class="link-toggle" id="show-register">Don't have an account? Register here.</p>
-        </section>
-        <section id="register-page" role="form" aria-label="Register Form" hidden>
+        </div>
+
+        <div id="register-page" role="form" aria-label="Registration form" hidden>
           <h2>Register</h2>
           <label for="reg-email-input">Email</label>
-          <input id="reg-email-input" type="email" placeholder="Email" autocomplete="username" aria-required="true" />
+          <input id="reg-email-input" type="email" autocomplete="username" />
           <label for="reg-password-input">Password</label>
-          <input id="reg-password-input" type="password" placeholder="Password" autocomplete="new-password" aria-required="true" />
+          <input id="reg-password-input" type="password" autocomplete="new-password" />
           <button id="register-btn">Register</button>
           <p class="link-toggle" id="show-login">Already have an account? Login here.</p>
-        </section>
-      </div>
+        </div>
 
-      <!-- MAIN APP PAGES -->
-      <section id="page-balance" class="page" aria-label="Balance and Overview" tabindex="0" hidden>
-        <div class="balance-box" aria-live="assertive" aria-atomic="true" aria-relevant="text">
+      </section>
+
+      <section id="page-balance" class="page" hidden aria-label="Balance overview">
+        <div class="balance-box">
           <h3>&#8358;<span id="balance-amount">0</span></h3>
           <p>Your Current Balance</p>
         </div>
-        <div class="referral" aria-label="Referral Link">
+        <div class="referral">
           <input type="text" id="referral-link" readonly aria-label="Referral link" />
-          <button id="copy-referral-btn" aria-label="Copy referral link to clipboard">Copy</button>
+          <button id="copy-referral-btn">Copy</button>
         </div>
-        <div class="action-buttons" role="group" aria-label="Main actions">
-          <button id="goto-withdraw-btn" aria-controls="page-withdraw">Withdraw</button>
-          <button id="goto-earn-btn" aria-controls="page-earn">Keep Earning</button>
+        <div class="action-buttons">
+          <button id="goto-withdraw-btn">Withdraw</button>
+          <button id="goto-earn-btn">Keep Earning</button>
         </div>
-        <div class="description" aria-label="How to Earn Description">
-          <p>Earn money by:</p>
-          <ul>
-            <li>Following our <a href="https://www.facebook.com/share/1CQTgX1XFw/?mibextid=qi2Omg" target="_blank" rel="noopener noreferrer" tabindex="-1">Facebook</a>, <a href="https://twitter.com/youraccount" target="_blank" rel="noopener noreferrer" tabindex="-1">Twitter</a>, and <a href="https://youtube.com/@learnwithugo" target="_blank" rel="noopener noreferrer" tabindex="-1">YouTube</a> accounts.</li>
-            <li>Watching videos for at least 5 minutes to earn ₦500 per video.</li>
-            <li>Liking and retweeting our Twitter posts for ₦500 earnings.</li>
-            <li>Inviting friends to level up and increase your earnings.</li>
-            <li>Registration and daily login bonuses.</li>
-          </ul>
+        <div class="description">
+          <p>Earn money by following our Facebook, Twitter, YouTube accounts, watching videos, liking & retweeting, and inviting friends.</p>
         </div>
       </section>
 
-      <section id="page-earn" class="page" aria-label="Earn Money Tasks" tabindex="0" hidden>
+      <section id="page-earn" class="page" hidden aria-label="Earning tasks">
         <div class="task" id="follow-tasks">
-          <h3>Follow Accounts (Earn ₦5000 each)</h3>
+          <h3>Follow Accounts (₦5000 each)</h3>
           <button id="follow-facebook-btn">Follow Facebook</button>
           <button id="follow-twitter-btn">Follow Twitter</button>
           <button id="follow-youtube-btn">Follow YouTube</button>
         </div>
         <div class="task" id="watch-videos">
-          <h3>Watch Videos to Earn (₦500 per video, 5 minutes)</h3>
-          <div id="task-videos" aria-label="Videos to watch">
-            <div style="margin-bottom:40px;">
-              <h4 style="font-weight:600; color:#004080; margin-bottom:12px;">Master TVFS Online Vetted Jobs 2023</h4>
-              <iframe src="https://www.youtube.com/embed/X9HScNRpABc" frameborder="0" allowfullscreen></iframe>
-              <button class="watch-video-btn" data-video-id="X9HScNRpABc" style="width:100%; margin-top:12px;">Watch to Earn ₦500</button>
+          <h3>Watch Videos to Earn (₦500 each)</h3>
+          <div id="task-videos">
+            <!-- Hardcoded videos (YouTube embeds with watch buttons) -->
+            <div>
+              <h4>Master TVFS Online Vetted Jobs 2023</h4>
+              <iframe src="https://www.youtube.com/embed/X9HScNRpABc" allowfullscreen></iframe>
+              <button class="watch-video-btn" data-video-id="X9HScNRpABc">Watch to Earn ₦500</button>
             </div>
-            <div style="margin-bottom:40px;">
-              <h4 style="font-weight:600; color:#004080; margin-bottom:12px;">Writing a Research Proposal</h4>
-              <iframe src="https://www.youtube.com/embed/EoanSv_ga0I" frameborder="0" allowfullscreen></iframe>
-              <button class="watch-video-btn" data-video-id="EoanSv_ga0I" style="width:100%; margin-top:12px;">Watch to Earn ₦500</button>
+            <div>
+              <h4>Writing a Research Proposal</h4>
+              <iframe src="https://www.youtube.com/embed/EoanSv_ga0I" allowfullscreen></iframe>
+              <button class="watch-video-btn" data-video-id="EoanSv_ga0I">Watch to Earn ₦500</button>
             </div>
-            <div style="margin-bottom:40px;">
-              <h4 style="font-weight:600; color:#004080; margin-bottom:12px;">How to become the best student in your school</h4>
-              <iframe src="https://www.youtube.com/embed/s4UGa1K_iME" frameborder="0" allowfullscreen></iframe>
-              <button class="watch-video-btn" data-video-id="s4UGa1K_iME" style="width:100%; margin-top:12px;">Watch to Earn ₦500</button>
+            <div>
+              <h4>How to become the best student in your school</h4>
+              <iframe src="https://www.youtube.com/embed/s4UGa1K_iME" allowfullscreen></iframe>
+              <button class="watch-video-btn" data-video-id="s4UGa1K_iME">Watch to Earn ₦500</button>
             </div>
-            <div style="margin-bottom:40px;">
-              <h4 style="font-weight:600; color:#004080; margin-bottom:12px;">How to download video from YouTube (No software)</h4>
-              <iframe src="https://www.youtube.com/embed/JNaQAbJ_Ajg" frameborder="0" allowfullscreen></iframe>
-              <button class="watch-video-btn" data-video-id="JNaQAbJ_Ajg" style="width:100%; margin-top:12px;">Watch to Earn ₦500</button>
+            <div>
+              <h4>How to download video from YouTube</h4>
+              <iframe src="https://www.youtube.com/embed/JNaQAbJ_Ajg" allowfullscreen></iframe>
+              <button class="watch-video-btn" data-video-id="JNaQAbJ_Ajg">Watch to Earn ₦500</button>
             </div>
-            <div style="margin-bottom:40px;">
-              <h4 style="font-weight:600; color:#004080; margin-bottom:12px;">Advanced Research | How To Write Research</h4>
-              <iframe src="https://www.youtube.com/embed/9rpCoWS1vzI" frameborder="0" allowfullscreen></iframe>
-              <button class="watch-video-btn" data-video-id="9rpCoWS1vzI" style="width:100%; margin-top:12px;">Watch to Earn ₦500</button>
+            <div>
+              <h4>Advanced Research | How To Write Research</h4>
+              <iframe src="https://www.youtube.com/embed/9rpCoWS1vzI" allowfullscreen></iframe>
+              <button class="watch-video-btn" data-video-id="9rpCoWS1vzI">Watch to Earn ₦500</button>
             </div>
           </div>
         </div>
         <div class="task" id="twitter-engagement">
           <h3>Twitter Like & Retweet (₦500 each)</h3>
-          <button id="twitter-like-btn" style="width:100%;">Like & Retweet</button>
+          <button id="twitter-like-btn">Like & Retweet</button>
         </div>
         <div class="task" id="invite-section">
           <h3>Invite Friends & Ranking</h3>
-          <p>Earn ₦800 per invite.</p>
-          <p>Invite 5 friends to level up. Max 10 levels.</p>
+          <p>Earn ₦800 per invite. Level up every 5 invites (max 10 levels).</p>
           <p>Your Level: <span id="user-level">1</span></p>
-          <p>Invites Count: <span id="invite-count">0</span></p>
-          <button id="invite-btn" style="width:100%;">Invite a Friend</button>
+          <p>Invites: <span id="invite-count">0</span></p>
+          <button id="invite-btn">Invite a Friend</button>
         </div>
       </section>
 
-      <section id="page-withdraw" class="page" aria-label="Withdrawal Form" tabindex="0" hidden>
+      <section id="page-withdraw" class="page" hidden aria-label="Withdrawal form">
         <form id="withdraw-form" novalidate>
           <h3>Withdrawal Request</h3>
           <label for="withdraw-amount">Amount (Min ₦250,000)</label>
-          <input type="number" id="withdraw-amount" placeholder="₦250000" min="250000" step="1000" required aria-required="true" />
+          <input id="withdraw-amount" type="number" min="250000" step="1000" required placeholder="₦250000"/>
           <label for="withdraw-method">Method</label>
-          <select id="withdraw-method" required aria-required="true">
+          <select id="withdraw-method" required>
             <option value="">Select withdrawal method</option>
             <option value="Opay">Opay</option>
             <option value="Pampay">Pampay</option>
             <option value="Kuda">Kuda</option>
           </select>
           <label for="account-details">Account Number / Phone</label>
-          <input type="text" id="account-details" placeholder="Account details" required aria-required="true" />
-          <button id="withdraw-btn" type="submit" style="width:100%;">Submit Withdrawal</button>
+          <input id="account-details" type="text" required placeholder="Account details" />
+          <button id="withdraw-btn" type="submit">Submit Withdrawal</button>
           <p id="withdraw-note">Withdrawals take up to 7 days to process.</p>
         </form>
       </section>
     </main>
   </div>
+
   <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
   <script src="app.js"></script>
 </body>
-  </html>
-  
+</html>
